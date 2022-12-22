@@ -404,10 +404,6 @@ def multi_head_attention_forward(
         new_attn_mask.masked_fill(attn_mask, float("-inf"))
         attn_mask = new_attn_mask
 
-    # adjust dropout probability
-    if not training:
-        dropout_p = 0.0
-
     #
     # (deep breath) calculate attention and out projection
     #
@@ -423,7 +419,7 @@ def multi_head_attention_forward(
     v = v.view(bsz, num_heads, src_len, head_dim)
 
     attn_output, attn_output_weights = _scaled_dot_product_attention(
-        q, k, v, attn_mask, dropout_p, need_weights, is_causal)
+        q, k, v, attn_mask, dropout_p, need_weights, is_causal, training)
     attn_output = attn_output.transpose(2, 0, 1, 3).view(bsz * tgt_len, embed_dim)
 
     attn_output = linear(attn_output, out_proj_weight, out_proj_bias)
