@@ -1,6 +1,11 @@
+import math
 from mindspore import nn, Parameter, Tensor
-from mindspore.common.initializer import initializer, XavierNormal, XavierUniform, Zero
+from mindspore.common.initializer import initializer, XavierNormal, XavierUniform, HeUniform
 from .ops import multi_head_attention_forward
+
+class Linear(nn.Dense):
+    def __init__(self, in_channels, out_channels, has_bias=True):
+        super().__init__(in_channels, out_channels, weight_init=HeUniform(math.sqrt(5)), bias_init='zeros', has_bias=has_bias, activation=None)
 
 class MultiheadAttention(nn.Cell):
     r"""Allows the model to jointly attend to information
@@ -88,7 +93,7 @@ class MultiheadAttention(nn.Cell):
             self.in_proj_bias = Parameter(initializer('zeros', (3 * embed_dim)), 'in_proj_bias')
         else:
             self.in_proj_bias = None
-        self.out_proj = nn.Dense(embed_dim, embed_dim, has_bias=bias)
+        self.out_proj = Linear(embed_dim, embed_dim, has_bias=bias)
 
         if add_bias_kv:
             self.bias_k = Parameter(initializer(XavierNormal(), (1, 1, embed_dim)), 'bias_k')
