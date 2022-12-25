@@ -102,6 +102,16 @@ class MultiheadAttention(nn.Cell):
             self.bias_k = self.bias_v = None
 
         self.add_zero_attn = add_zero_attn
+        self.k_is_v = False
+        self.q_is_k = False
+
+    def __call__(self, *args, **kwargs):
+        query = kwargs.get('query', args[0])
+        key = kwargs.get('key', args[1])
+        value = kwargs.get('value', args[2])
+        self.k_is_v = key is value
+        self.q_is_k = query is key
+        return super().__call__(*args, **kwargs)
 
     def construct(self, query: Tensor, key: Tensor, value: Tensor, key_padding_mask = None,
                  need_weights: bool = True, attn_mask = None,
@@ -116,8 +126,8 @@ class MultiheadAttention(nn.Cell):
 
         if self.batch_first and is_batched:
             # make sure that the transpose op does not affect the "is" property
-            if key is value:
-                if query is key:
+            if self.k_is_v:
+                if self.q_is_k:
                     query = key = value = query.swapaxes(1, 0)
                 else:
                     query, key = [x.swapaxes(1, 0) for x in (query, key)]
@@ -132,10 +142,11 @@ class MultiheadAttention(nn.Cell):
                 self.bias_k, self.bias_v, self.add_zero_attn,
                 self.dropout, self.out_proj.weight, self.out_proj.bias,
                 training=self.training,
-                key_padding_mask=key_padding_mask, need_weights=need_weights,
+                key_padding_mask=key_padding_mask,
                 attn_mask=attn_mask, use_separate_proj_weight=True,
                 q_proj_weight=self.q_proj_weight, k_proj_weight=self.k_proj_weight,
-                v_proj_weight=self.v_proj_weight, average_attn_weights=average_attn_weights)
+                v_proj_weight=self.v_proj_weight, average_attn_weights=average_attn_weights,
+                k_is_v=self.k_is_v, q_is_k=self.q_is_k)
         else:
             attn_output, attn_output_weights = multi_head_attention_forward(
                 query, key, value, self.embed_dim, self.num_heads,
@@ -143,9 +154,12 @@ class MultiheadAttention(nn.Cell):
                 self.bias_k, self.bias_v, self.add_zero_attn,
                 self.dropout, self.out_proj.weight, self.out_proj.bias,
                 training=self.training,
-                key_padding_mask=key_padding_mask, need_weights=need_weights,
-                attn_mask=attn_mask, average_attn_weights=average_attn_weights)
+                key_padding_mask=key_padding_mask,
+                attn_mask=attn_mask, average_attn_weights=average_attn_weights,
+                k_is_v=self.k_is_v, q_is_k=self.q_is_k)
+
         if self.batch_first and is_batched:
-            return attn_output.swapaxes(1, 0), attn_output_weights
-        else:
+            attn_output = attn_output.swapaxes(1, 0)
+        if need_weights:
             return attn_output, attn_output_weights
+        return (attn_output,)

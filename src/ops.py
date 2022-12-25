@@ -1,9 +1,9 @@
 import mindspore
-from mindspore import ops
+from mindspore import ops, Tensor
 from mindspore.ops import constexpr
 
 def linear(x, w, b):
-    out = ops.matmul(x, w)
+    out = ops.matmul(x, w.swapaxes(-1, -2))
     if b is not None:
         out = out + b
     return out
@@ -56,8 +56,7 @@ def _in_projection(
     # assert b_v is None or b_v.shape == (Eq,), f"expecting value bias shape of {(Eq,)}, but got {b_v.shape}"
     return linear(q, w_q, b_q), linear(k, w_k, b_k), linear(v, w_v, b_v)
 
-
-def _in_projection_packed(q, k, v, w, b):
+def _in_projection_packed(q, k, v, w, b, k_is_v, q_is_k):
     r"""
     Performs the in-projection step of the attention operation, using packed weights.
     Output is a triple containing projection tensors for query, key and value.
@@ -83,8 +82,8 @@ def _in_projection_packed(q, k, v, w, b):
             same shape as the corresponding input tensor.
     """
     E = q.shape[-1]
-    if k is v:
-        if q is k:
+    if k_is_v:
+        if q_is_k:
             # self-attention
             return linear(q, w, b).tensor_split(3, axis=-1)
         else:
@@ -103,9 +102,9 @@ def _in_projection_packed(q, k, v, w, b):
             b_q, b_k, b_v = b.tensor_split(3)
         return linear(q, w_q, b_q), linear(k, w_k, b_k), linear(v, w_v, b_v)
 
-def _scaled_dot_product_attention(query, key, value, attn_mask, dropout_p, need_attn_weights, is_causal, is_training):
+def _scaled_dot_product_attention(query, key, value, attn_mask, dropout_p, is_causal, is_training):
     embed_size = query.shape[-1]
-    scaling_factor = embed_size.sqrt().sqrt()
+    scaling_factor = Tensor(embed_size, mindspore.float32).sqrt().sqrt()
     query = query / scaling_factor
 
     if is_causal:
@@ -120,11 +119,9 @@ def _scaled_dot_product_attention(query, key, value, attn_mask, dropout_p, need_
         attn = ops.dropout(attn, dropout_p)
     output = ops.matmul(attn, value)
 
-    if need_attn_weights:
-        return (output, attn)
-    return output
+    return (output, attn)
 
-@constexpr
+# @constexpr
 def _mha_shape_check(query, key, value, key_padding_mask, attn_mask, num_heads):
     # Verifies the expected shape for `query, `key`, `value`, `key_padding_mask` and `attn_mask`
     # and returns if the input is batched or not.
@@ -192,7 +189,6 @@ def multi_head_attention_forward(
     out_proj_bias,
     training: bool = True,
     key_padding_mask = None,
-    need_weights: bool = True,
     attn_mask = None,
     use_separate_proj_weight: bool = False,
     q_proj_weight = None,
@@ -202,6 +198,8 @@ def multi_head_attention_forward(
     static_v = None,
     average_attn_weights: bool = True,
     is_causal: bool = False,
+    k_is_v: bool = False,
+    q_is_k: bool = False,
 ):
     r"""
     Args:
@@ -219,7 +217,6 @@ def multi_head_attention_forward(
         key_padding_mask: if provided, specified padding elements in the key will
             be ignored by the attention. This is an binary mask. When the value is True,
             the corresponding value on the attention layer will be filled with -inf.
-        need_weights: output attn_output_weights.
         attn_mask: 2D or 3D mask that prevents attention to certain positions. A 2D mask will be broadcasted for all
             the batches while a 3D mask allows to specify a different mask for the entries of each batch.
         is_causal: If specified, applies a causal mask as attention mask. Mutually exclusive with providing attn_mask.
@@ -303,7 +300,7 @@ def multi_head_attention_forward(
     #
     if not use_separate_proj_weight:
         assert in_proj_weight is not None, "use_separate_proj_weight is False but in_proj_weight is None"
-        q, k, v = _in_projection_packed(query, key, value, in_proj_weight, in_proj_bias)
+        q, k, v = _in_projection_packed(query, key, value, in_proj_weight, in_proj_bias, k_is_v, q_is_k)
     else:
         assert q_proj_weight is not None, "use_separate_proj_weight is True but q_proj_weight is None"
         assert k_proj_weight is not None, "use_separate_proj_weight is True but k_proj_weight is None"
@@ -419,25 +416,19 @@ def multi_head_attention_forward(
     v = v.view(bsz, num_heads, src_len, head_dim)
 
     attn_output, attn_output_weights = _scaled_dot_product_attention(
-        q, k, v, attn_mask, dropout_p, need_weights, is_causal, training)
+        q, k, v, attn_mask, dropout_p, is_causal, training)
     attn_output = attn_output.transpose(2, 0, 1, 3).view(bsz * tgt_len, embed_dim)
 
     attn_output = linear(attn_output, out_proj_weight, out_proj_bias)
     attn_output = attn_output.view(tgt_len, bsz, attn_output.shape[1])
 
-    if need_weights:
-        # optionally average attention weights over heads
-        attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)
-        if average_attn_weights:
-            attn_output_weights = attn_output_weights.sum(dim=1) / num_heads
+    # optionally average attention weights over heads
+    attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)
+    if average_attn_weights:
+        attn_output_weights = attn_output_weights.sum(axis=1) / num_heads
 
-        if not is_batched:
-            # squeeze the output if input was unbatched
-            attn_output = attn_output.squeeze(1)
-            attn_output_weights = attn_output_weights.squeeze(0)
-        return attn_output, attn_output_weights
-    else:
-        if not is_batched:
-            # squeeze the output if input was unbatched
-            attn_output = attn_output.squeeze(1)
-        return attn_output, None
+    if not is_batched:
+        # squeeze the output if input was unbatched
+        attn_output = attn_output.squeeze(1)
+        attn_output_weights = attn_output_weights.squeeze(0)
+    return attn_output, attn_output_weights

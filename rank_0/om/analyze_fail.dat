@@ -1,0 +1,1279 @@
+# 1.This file shows the parsed IR info when graph evaluating failed to help find the problem.
+# 2.You can search the last `------------------------>` to the node which is inferred failed.
+# 3.Refer to https://www.mindspore.cn/search?inputValue=analyze_fail.dat to get more instructions.
+# ===============================================================================
+
+subgraph attr:
+subgraph instance: forward.300 : 0x7fe4875a3818
+# In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:30/        def forward(q, k, v):/
+subgraph @forward.300(%para1_q, %para2_k, %para3_v, %para4_in_proj_weight, %para5_in_proj_bias, %para6_out_proj.weight, %para7_out_proj.bias) {
+
+#------------------------> 0
+  %1(out) = call @construct.Default.352(%para1_q, %para2_k, %para3_v)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  Primitive::Return{prim_type=1}(%1)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:32/            return out/
+}
+# order:
+#   1: @forward.300:out{[0]: ValueNode<FuncGraph> construct.Default.352, [1]: q, [2]: k, [3]: v}
+#   2: @forward.300:[CNode]353{[0]: ValueNode<Primitive> Return, [1]: out}
+
+
+subgraph attr:
+subgraph instance: construct.Default.327 : 0x7fe4886eba18
+# In file /Users/lvyufeng/Projects/Transformer/src/nn.py:116/    def construct(self, query: Tensor, key: Tensor, value: Tensor, key_padding_mask = None,/
+subgraph @construct.Default.327 parent: [subgraph @forward.300](%para8_query, %para9_key, %para10_value) {
+  %1([CNode]354) = DoSignaturePrimitive::S-Prim-is_not{prim_type=1}(None, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+  %2([CNode]356) = call @bool_.355(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+  %3([CNode]357) = Primitive::Switch{prim_type=1}(%2, call @✓construct.Default.358, call @✗construct.Default.328)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+
+#------------------------> 1
+  %4([CNode]359) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+  Primitive::Return{prim_type=1}(%4)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+}
+# order:
+#   1: @construct.Default.327:[CNode]360{[0]: ValueNode<Primitive> getattr, [1]: фquery, [2]: ValueNode<StringImm> ndim}
+#   2: @construct.Default.327:фis_batched{[0]: ValueNode<DoSignaturePrimitive> S-Prim-equal, [1]: [CNode]360, [2]: ValueNode<Int64Imm> 3}
+#   3: @construct.Default.327:[CNode]354{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_not, [1]: ValueNode<None> None, [2]: ValueNode<None> None}
+#   4: @construct.Default.327:[CNode]356{[0]: ValueNode<FuncGraph> bool_.355, [1]: [CNode]354}
+#   5: @construct.Default.327:[CNode]357{[0]: ValueNode<Primitive> Switch, [1]: [CNode]356, [2]: ValueNode<FuncGraph> ✓construct.Default.358, [3]: ValueNode<FuncGraph> ✗construct.Default.328}
+#   6: @construct.Default.327:[CNode]359{[0]: [CNode]357}
+#   7: @construct.Default.327:[CNode]361{[0]: ValueNode<Primitive> Return, [1]: [CNode]359}
+
+
+subgraph attr:
+subgraph instance: ✗construct.Default.328 : 0x7fe4886fc018
+# In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+subgraph @✗construct.Default.328 parent: [subgraph @construct.Default.327]() {
+
+#------------------------> 2
+  %1([CNode]362) = call @↓construct.Default.329()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  Primitive::Return{prim_type=1}(%1)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+}
+# order:
+#   1: @✗construct.Default.328:[CNode]363{[0]: ValueNode<Primitive> Return, [1]: [CNode]362}
+#   2: @✗construct.Default.328:[CNode]362{[0]: ValueNode<FuncGraph> ↓construct.Default.329}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓construct.Default.329 : 0x7fe4875ca218
+# In file /Users/lvyufeng/Projects/Transformer/src/nn.py:121/        if key_padding_mask is not None:/
+subgraph @↓construct.Default.329 parent: [subgraph @construct.Default.327]() {
+  %1([CNode]364) = call @bool_.355(Bool(0))
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+  %2([CNode]365) = Primitive::Switch{prim_type=1}(%1, call @↰↓construct.Default.366, call @↱↓construct.Default.367)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+  %3([CNode]368) = %2()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+  %4([CNode]369) = call @bool_.355(%3)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+  %5([CNode]370) = Primitive::Switch{prim_type=1}(%4, call @✓↓construct.Default.371, call @✗↓construct.Default.372)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+  %6([CNode]373) = %5()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+  %7([CNode]374) = Primitive::TupleGetItem{prim_type=1}(%6, I64(0))
+      :(<Tuple[Tensor[Float32]*3], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  %8([CNode]375) = Primitive::TupleGetItem{prim_type=1}(%6, I64(1))
+      :(<Tuple[Tensor[Float32]*3], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  %9([CNode]376) = Primitive::TupleGetItem{prim_type=1}(%6, I64(2))
+      :(<Tuple[Tensor[Float32]*3], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+
+#------------------------> 3
+  %10([CNode]377) = call @↓↓construct.Default.330(%7, %8, %9)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  Primitive::Return{prim_type=1}(%10)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+}
+# order:
+#   1: @↓construct.Default.329:[CNode]364{[0]: ValueNode<FuncGraph> bool_.355, [1]: ValueNode<BoolImm> false}
+#   2: @↓construct.Default.329:[CNode]365{[0]: ValueNode<Primitive> Switch, [1]: [CNode]364, [2]: ValueNode<FuncGraph> ↰↓construct.Default.366, [3]: ValueNode<FuncGraph> ↱↓construct.Default.367}
+#   3: @↓construct.Default.329:[CNode]368{[0]: [CNode]365}
+#   4: @↓construct.Default.329:[CNode]369{[0]: ValueNode<FuncGraph> bool_.355, [1]: [CNode]368}
+#   5: @↓construct.Default.329:[CNode]370{[0]: ValueNode<Primitive> Switch, [1]: [CNode]369, [2]: ValueNode<FuncGraph> ✓↓construct.Default.371, [3]: ValueNode<FuncGraph> ✗↓construct.Default.372}
+#   6: @↓construct.Default.329:[CNode]373{[0]: [CNode]370}
+#   7: @↓construct.Default.329:[CNode]377{[0]: ValueNode<FuncGraph> ↓↓construct.Default.330, [1]: [CNode]374, [2]: [CNode]375, [3]: [CNode]376}
+#   8: @↓construct.Default.329:[CNode]378{[0]: ValueNode<Primitive> Return, [1]: [CNode]377}
+#   9: @↓construct.Default.329:[CNode]374{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]373, [2]: ValueNode<Int64Imm> 0}
+#  10: @↓construct.Default.329:[CNode]375{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]373, [2]: ValueNode<Int64Imm> 1}
+#  11: @↓construct.Default.329:[CNode]376{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]373, [2]: ValueNode<Int64Imm> 2}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓construct.Default.330 : 0x7fe4876dc618
+# In file /Users/lvyufeng/Projects/Transformer/src/nn.py:127/        if self.batch_first and is_batched:/
+subgraph @↓↓construct.Default.330 parent: [subgraph @construct.Default.327](%para11_, %para12_, %para13_) {
+  %1([CNode]379) = DoSignaturePrimitive::S-Prim-logical_not{prim_type=1}(Bool(1))
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:138/        if not self._qkv_same_embed_dim:/
+  %2([CNode]380) = call @bool_.355(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:138/        if not self._qkv_same_embed_dim:/
+  %3([CNode]381) = Primitive::Switch{prim_type=1}(%2, call @✓↓↓construct.Default.382, call @✗↓↓construct.Default.331)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:138/        if not self._qkv_same_embed_dim:/
+
+#------------------------> 4
+  %4([CNode]383) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:138/        if not self._qkv_same_embed_dim:/
+  %5([CNode]384) = Primitive::TupleGetItem{prim_type=1}(%4, I64(0))
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  %6([CNode]385) = Primitive::TupleGetItem{prim_type=1}(%4, I64(1))
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  %7([CNode]387) = call @↓↓↓construct.Default.386(%5, %6)
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  Primitive::Return{prim_type=1}(%7)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:138/        if not self._qkv_same_embed_dim:/
+}
+# order:
+#   1: @↓↓construct.Default.330:[CNode]379{[0]: ValueNode<DoSignaturePrimitive> S-Prim-logical_not, [1]: ValueNode<BoolImm> true}
+#   2: @↓↓construct.Default.330:[CNode]380{[0]: ValueNode<FuncGraph> bool_.355, [1]: [CNode]379}
+#   3: @↓↓construct.Default.330:[CNode]381{[0]: ValueNode<Primitive> Switch, [1]: [CNode]380, [2]: ValueNode<FuncGraph> ✓↓↓construct.Default.382, [3]: ValueNode<FuncGraph> ✗↓↓construct.Default.331}
+#   4: @↓↓construct.Default.330:[CNode]383{[0]: [CNode]381}
+#   5: @↓↓construct.Default.330:[CNode]387{[0]: ValueNode<FuncGraph> ↓↓↓construct.Default.386, [1]: [CNode]384, [2]: [CNode]385}
+#   6: @↓↓construct.Default.330:[CNode]388{[0]: ValueNode<Primitive> Return, [1]: [CNode]387}
+#   7: @↓↓construct.Default.330:[CNode]384{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]383, [2]: ValueNode<Int64Imm> 0}
+#   8: @↓↓construct.Default.330:[CNode]385{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]383, [2]: ValueNode<Int64Imm> 1}
+
+
+subgraph attr:
+subgraph instance: ✗↓↓construct.Default.331 : 0x7fe4876dcc18
+# In file /Users/lvyufeng/Projects/Transformer/src/nn.py:138/        if not self._qkv_same_embed_dim:/
+subgraph @✗↓↓construct.Default.331 parent: [subgraph @↓↓construct.Default.330]() {
+  %1([CNode]389) = DoSignaturePrimitive::S-Prim-MakeTuple{prim_type=1}(%para11_фquery, %para12_фkey, %para13_фvalue, I64(128), I64(8), %para4_in_proj_weight, %para5_in_proj_bias, None, None, Bool(0), F32(0), %para6_out_proj.weight, %para7_out_proj.bias)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Int64, NoShape>, <Int64, NoShape>, <Ref[Tensor[Float32]], (384, 128)>, <Ref[Tensor[Float32]], (384)>, <None, NoShape>, <None, NoShape>, <Bool, NoShape>, <Float32, NoShape>, <Ref[Tensor[Float32]], (128, 128)>, <Ref[Tensor[Float32]], (128)>) -> (<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %2([CNode]390) = DoSignaturePrimitive::S-Prim-MakeTuple{prim_type=1}("training", "key_padding_mask", "attn_mask", "average_attn_weights", "k_is_v", "q_is_k")
+      :(<String, NoShape>, <String, NoShape>, <String, NoShape>, <String, NoShape>, <String, NoShape>, <String, NoShape>) -> (<Tuple[String*6], TupleShape(NoShape, NoShape, NoShape, NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %3([CNode]391) = DoSignaturePrimitive::S-Prim-MakeTuple{prim_type=1}(Bool(0), None, None, Bool(1), Bool(0), Bool(0))
+      :(<Bool, NoShape>, <None, NoShape>, <None, NoShape>, <Bool, NoShape>, <Bool, NoShape>, <Bool, NoShape>) -> (<Tuple[Bool,None*2,Bool*3], TupleShape(NoShape, NoShape, NoShape, NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %4([CNode]392) = DoSignaturePrimitive::S-Prim-make_dict{prim_type=1}(%2, %3)
+      :(<Tuple[String*6], TupleShape(NoShape, NoShape, NoShape, NoShape, NoShape, NoShape)>, <Tuple[Bool,None*2,Bool*3], TupleShape(NoShape, NoShape, NoShape, NoShape, NoShape, NoShape)>) -> (<Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+
+#------------------------> 5
+  %5([CNode]393) = UnpackCall::unpack_call(call @multi_head_attention_forward.394, %1, %4)
+      :(<Func, NoShape>, <Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %6(attn_output) = DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%5, I64(0))
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %7(attn_output_weights) = DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%5, I64(1))
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %8([CNode]395) = Primitive::MakeTuple{prim_type=1}(%6, %7)
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/tests/test_multi_head_attention.py:31/            out = model(q, k, v)/
+  Primitive::Return{prim_type=1}(%8)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:138/        if not self._qkv_same_embed_dim:/
+}
+# order:
+#   1: @✗↓↓construct.Default.331:[CNode]389{[0]: ValueNode<DoSignaturePrimitive> S-Prim-MakeTuple, [1]: фquery, [2]: фkey, [3]: фvalue, [4]: ValueNode<Int64Imm> 128, [5]: ValueNode<Int64Imm> 8, [6]: in_proj_weight, [7]: in_proj_bias, [8]: ValueNode<None> None, [9]: ValueNode<None> None, [10]: ValueNode<BoolImm> false, [11]: ValueNode<FP32Imm> 0.000000, [12]: out_proj.weight, [13]: out_proj.bias}
+#   2: @✗↓↓construct.Default.331:[CNode]390{[0]: ValueNode<DoSignaturePrimitive> S-Prim-MakeTuple, [1]: ValueNode<StringImm> training, [2]: ValueNode<StringImm> key_padding_mask, [3]: ValueNode<StringImm> attn_mask, [4]: ValueNode<StringImm> average_attn_weights, [5]: ValueNode<StringImm> k_is_v, [6]: ValueNode<StringImm> q_is_k}
+#   3: @✗↓↓construct.Default.331:[CNode]391{[0]: ValueNode<DoSignaturePrimitive> S-Prim-MakeTuple, [1]: ValueNode<BoolImm> false, [2]: ValueNode<None> None, [3]: ValueNode<None> None, [4]: ValueNode<BoolImm> true, [5]: ValueNode<BoolImm> false, [6]: ValueNode<BoolImm> false}
+#   4: @✗↓↓construct.Default.331:[CNode]392{[0]: ValueNode<DoSignaturePrimitive> S-Prim-make_dict, [1]: [CNode]390, [2]: [CNode]391}
+#   5: @✗↓↓construct.Default.331:[CNode]393{[0]: ValueNode<UnpackCall> unpack_call.396, [1]: ValueNode<FuncGraph> multi_head_attention_forward.394, [2]: [CNode]389, [3]: [CNode]392}
+#   6: @✗↓↓construct.Default.331:attn_output{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]393, [2]: ValueNode<Int64Imm> 0}
+#   7: @✗↓↓construct.Default.331:attn_output_weights{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]393, [2]: ValueNode<Int64Imm> 1}
+#   8: @✗↓↓construct.Default.331:[CNode]397{[0]: ValueNode<Primitive> Return, [1]: [CNode]395}
+#   9: @✗↓↓construct.Default.331:[CNode]395{[0]: ValueNode<Primitive> MakeTuple, [1]: attn_output, [2]: attn_output_weights}
+
+
+subgraph attr:
+core : 1
+subgraph instance: UnpackCall.332 : 0x7fe4875b8018
+# In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+subgraph @UnpackCall.332(%para14_, %para15_, %para16_) {
+  %1([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(0))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %2([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(1))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %3([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(2))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %4([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(3))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %5([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(4))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %6([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(5))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Ref[Tensor[Float32]], (384, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %7([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(6))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Ref[Tensor[Float32]], (384)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %8([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(7))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %9([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(8))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %10([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(9))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %11([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(10))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Float32, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %12([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(11))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Ref[Tensor[Float32]], (128, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %13([CNode]393) = Primitive::TupleGetItem{prim_type=1}(%para15_334, I64(12))
+      :(<Tuple[Tensor[Float32]*3,Int64*2,Ref[Tensor[Float32]]*2,None*2,Bool,Float32,Ref[Tensor[Float32]]*2], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128), NoShape, NoShape, (384, 128), (384), NoShape, NoShape, NoShape, NoShape, (128, 128), (128))>, <Int64, NoShape>) -> (<Ref[Tensor[Float32]], (128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %14([CNode]393) = Primitive::dict_getitem{prim_type=1}(%para16_335, "training")
+      :(<Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>, <String, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %15([CNode]393) = Primitive::make_keyword_arg{prim_type=1}("training", %14)
+      :(<String, NoShape>, <Bool, NoShape>) -> (<Keyword[key : trainingvalue : Bool], NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %16([CNode]393) = Primitive::dict_getitem{prim_type=1}(%para16_335, "key_padding_mask")
+      :(<Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>, <String, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %17([CNode]393) = Primitive::make_keyword_arg{prim_type=1}("key_padding_mask", %16)
+      :(<String, NoShape>, <None, NoShape>) -> (<Keyword[key : key_padding_maskvalue : None], NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %18([CNode]393) = Primitive::dict_getitem{prim_type=1}(%para16_335, "attn_mask")
+      :(<Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>, <String, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %19([CNode]393) = Primitive::make_keyword_arg{prim_type=1}("attn_mask", %18)
+      :(<String, NoShape>, <None, NoShape>) -> (<Keyword[key : attn_maskvalue : None], NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %20([CNode]393) = Primitive::dict_getitem{prim_type=1}(%para16_335, "average_attn_weights")
+      :(<Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>, <String, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %21([CNode]393) = Primitive::make_keyword_arg{prim_type=1}("average_attn_weights", %20)
+      :(<String, NoShape>, <Bool, NoShape>) -> (<Keyword[key : average_attn_weightsvalue : Bool], NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %22([CNode]393) = Primitive::dict_getitem{prim_type=1}(%para16_335, "k_is_v")
+      :(<Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>, <String, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %23([CNode]393) = Primitive::make_keyword_arg{prim_type=1}("k_is_v", %22)
+      :(<String, NoShape>, <Bool, NoShape>) -> (<Keyword[key : k_is_vvalue : Bool], NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %24([CNode]393) = Primitive::dict_getitem{prim_type=1}(%para16_335, "q_is_k")
+      :(<Dictionary[[String*6],[Bool,None*2,Bool*3]], NoShape>, <String, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %25([CNode]393) = Primitive::make_keyword_arg{prim_type=1}("q_is_k", %24)
+      :(<String, NoShape>, <Bool, NoShape>) -> (<Keyword[key : q_is_kvalue : Bool], NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+
+#------------------------> 6
+  %26([CNode]393) = %para14_333(%1, %2, %3, %4, %5, %6, %7, %8, %9, %10, %11, %12, %13, %15, %17, %19, %21, %23, %25)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Int64, NoShape>, <Int64, NoShape>, <Ref[Tensor[Float32]], (384, 128)>, <Ref[Tensor[Float32]], (384)>, <None, NoShape>, <None, NoShape>, <Bool, NoShape>, <Float32, NoShape>, <Ref[Tensor[Float32]], (128, 128)>, <Ref[Tensor[Float32]], (128)>, <Keyword[key : trainingvalue : Bool], NoShape>, <Keyword[key : key_padding_maskvalue : None], NoShape>, <Keyword[key : attn_maskvalue : None], NoShape>, <Keyword[key : average_attn_weightsvalue : Bool], NoShape>, <Keyword[key : k_is_vvalue : Bool], NoShape>, <Keyword[key : q_is_kvalue : Bool], NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%26)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:151/            attn_output, attn_output_weights = multi_head_attention_forward(/
+}
+# order:
+#   1: @UnpackCall.332:[CNode]393{[0]: 333, [1]: [CNode]393, [2]: [CNode]393, [3]: [CNode]393, [4]: [CNode]393, [5]: [CNode]393, [6]: [CNode]393, [7]: [CNode]393, [8]: [CNode]393, [9]: [CNode]393, [10]: [CNode]393, [11]: [CNode]393, [12]: [CNode]393, [13]: [CNode]393, [14]: [CNode]393, [15]: [CNode]393, [16]: [CNode]393, [17]: [CNode]393, [18]: [CNode]393, [19]: [CNode]393}
+#   2: @UnpackCall.332:[CNode]393{[0]: ValueNode<Primitive> Return, [1]: [CNode]393}
+
+
+subgraph attr:
+subgraph instance: multi_head_attention_forward.336 : 0x7fe487758618
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:176/def multi_head_attention_forward(/
+subgraph @multi_head_attention_forward.336(%para17_query, %para18_key, %para19_value, %para20_embed_dim_to_check, %para21_num_heads, %para22_in_proj_weight, %para23_in_proj_bias, %para24_bias_k, %para25_bias_v, %para26_add_zero_attn, %para27_dropout_p, %para28_out_proj_weight, %para29_out_proj_bias, %para30_training, %para31_key_padding_mask, %para32_attn_mask, %para33_average_attn_weights, %para34_k_is_v, %para35_q_is_k) {
+  %1([CNode]398) = Primitive::extract_keyword_arg{prim_type=1}("key_padding_mask", %para31_key_padding_mask)
+      :(<String, NoShape>, <Keyword[key : key_padding_maskvalue : None], NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+  %2([CNode]399) = Primitive::extract_keyword_arg{prim_type=1}("attn_mask", %para32_фattn_mask)
+      :(<String, NoShape>, <Keyword[key : attn_maskvalue : None], NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+  %3(фis_batched) = call @_mha_shape_check.400(%para17_query, %para18_key, %para19_value, %1, %2, %para21_фnum_heads)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <None, NoShape>, <None, NoShape>, <Int64, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:430/    if not is_batched:/
+  %4([CNode]401) = DoSignaturePrimitive::S-Prim-logical_not{prim_type=1}(%3)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:270/    if not is_batched:/
+  %5([CNode]402) = call @bool_.302(%4)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:270/    if not is_batched:/
+  %6([CNode]403) = Primitive::Switch{prim_type=1}(%5, call @✓multi_head_attention_forward.404, call @✗multi_head_attention_forward.405)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:270/    if not is_batched:/
+  %7([CNode]406) = %6()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:270/    if not is_batched:/
+  %8([CNode]407) = Primitive::TupleGetItem{prim_type=1}(%7, I64(0))
+      :(<Tuple[Tensor[Float32]*2,None,Tensor[Float32]], TupleShape((10, 8, 128), (10, 8, 128), NoShape, (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %9([CNode]408) = Primitive::TupleGetItem{prim_type=1}(%7, I64(1))
+      :(<Tuple[Tensor[Float32]*2,None,Tensor[Float32]], TupleShape((10, 8, 128), (10, 8, 128), NoShape, (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %10([CNode]409) = Primitive::TupleGetItem{prim_type=1}(%7, I64(2))
+      :(<Tuple[Tensor[Float32]*2,None,Tensor[Float32]], TupleShape((10, 8, 128), (10, 8, 128), NoShape, (10, 8, 128))>, <Int64, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %11([CNode]410) = Primitive::TupleGetItem{prim_type=1}(%7, I64(3))
+      :(<Tuple[Tensor[Float32]*2,None,Tensor[Float32]], TupleShape((10, 8, 128), (10, 8, 128), NoShape, (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+
+#------------------------> 7
+  %12([CNode]411) = call @↓multi_head_attention_forward.337(%8, %9, %10, %11)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <None, NoShape>, <Tensor[Float32], (10, 8, 128)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%12)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:270/    if not is_batched:/
+}
+# order:
+#   1: @multi_head_attention_forward.336:фis_batched{[0]: ValueNode<FuncGraph> _mha_shape_check.400, [1]: query, [2]: key, [3]: value, [4]: [CNode]398, [5]: [CNode]399, [6]: фnum_heads}
+#   2: @multi_head_attention_forward.336:[CNode]401{[0]: ValueNode<DoSignaturePrimitive> S-Prim-logical_not, [1]: фis_batched}
+#   3: @multi_head_attention_forward.336:[CNode]402{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]401}
+#   4: @multi_head_attention_forward.336:[CNode]403{[0]: ValueNode<Primitive> Switch, [1]: [CNode]402, [2]: ValueNode<FuncGraph> ✓multi_head_attention_forward.404, [3]: ValueNode<FuncGraph> ✗multi_head_attention_forward.405}
+#   5: @multi_head_attention_forward.336:[CNode]406{[0]: [CNode]403}
+#   6: @multi_head_attention_forward.336:[CNode]411{[0]: ValueNode<FuncGraph> ↓multi_head_attention_forward.337, [1]: [CNode]407, [2]: [CNode]408, [3]: [CNode]409, [4]: [CNode]410}
+#   7: @multi_head_attention_forward.336:[CNode]412{[0]: ValueNode<Primitive> Return, [1]: [CNode]411}
+#   8: @multi_head_attention_forward.336:[CNode]407{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]406, [2]: ValueNode<Int64Imm> 0}
+#   9: @multi_head_attention_forward.336:[CNode]408{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]406, [2]: ValueNode<Int64Imm> 1}
+#  10: @multi_head_attention_forward.336:[CNode]409{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]406, [2]: ValueNode<Int64Imm> 2}
+#  11: @multi_head_attention_forward.336:[CNode]410{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]406, [2]: ValueNode<Int64Imm> 3}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓multi_head_attention_forward.337 : 0x7fe4876e4018
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:270/    if not is_batched:/
+subgraph @↓multi_head_attention_forward.337 parent: [subgraph @multi_head_attention_forward.336](%para36_, %para37_, %para38_, %para39_) {
+  %1([CNode]413) = DoSignaturePrimitive::S-Prim-is_not{prim_type=1}(%para38_фkey_padding_mask, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+  %2([CNode]414) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+  %3([CNode]415) = Primitive::Switch{prim_type=1}(%2, call @✓↓multi_head_attention_forward.416, call @✗↓multi_head_attention_forward.338)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+
+#------------------------> 8
+  %4([CNode]417) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+  Primitive::Return{prim_type=1}(%4)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+}
+# order:
+#   1: @↓multi_head_attention_forward.337:[CNode]418{[0]: ValueNode<Primitive> getattr, [1]: фquery, [2]: ValueNode<StringImm> shape}
+#   2: @↓multi_head_attention_forward.337:фtgt_len{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]418, [2]: ValueNode<Int64Imm> 0}
+#   3: @↓multi_head_attention_forward.337:фbsz{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]418, [2]: ValueNode<Int64Imm> 1}
+#   4: @↓multi_head_attention_forward.337:фembed_dim{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]418, [2]: ValueNode<Int64Imm> 2}
+#   5: @↓multi_head_attention_forward.337:[CNode]419{[0]: ValueNode<Primitive> getattr, [1]: фkey, [2]: ValueNode<StringImm> shape}
+#   6: @↓multi_head_attention_forward.337:фsrc_len{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]419, [2]: ValueNode<Int64Imm> 0}
+#   7: @↓multi_head_attention_forward.337:[CNode]413{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_not, [1]: фkey_padding_mask, [2]: ValueNode<None> None}
+#   8: @↓multi_head_attention_forward.337:[CNode]414{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]413}
+#   9: @↓multi_head_attention_forward.337:[CNode]415{[0]: ValueNode<Primitive> Switch, [1]: [CNode]414, [2]: ValueNode<FuncGraph> ✓↓multi_head_attention_forward.416, [3]: ValueNode<FuncGraph> ✗↓multi_head_attention_forward.338}
+#  10: @↓multi_head_attention_forward.337:[CNode]417{[0]: [CNode]415}
+#  11: @↓multi_head_attention_forward.337:[CNode]420{[0]: ValueNode<Primitive> Return, [1]: [CNode]417}
+
+
+subgraph attr:
+subgraph instance: ✗↓multi_head_attention_forward.338 : 0x7fe4876dd818
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+subgraph @✗↓multi_head_attention_forward.338 parent: [subgraph @↓multi_head_attention_forward.337]() {
+
+#------------------------> 9
+  %1([CNode]421) = call @↓↓multi_head_attention_forward.339()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%1)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+}
+# order:
+#   1: @✗↓multi_head_attention_forward.338:[CNode]422{[0]: ValueNode<Primitive> Return, [1]: [CNode]421}
+#   2: @✗↓multi_head_attention_forward.338:[CNode]421{[0]: ValueNode<FuncGraph> ↓↓multi_head_attention_forward.339}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓multi_head_attention_forward.339 : 0x7fe487757818
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:281/    if key_padding_mask is not None:/
+subgraph @↓↓multi_head_attention_forward.339 parent: [subgraph @↓multi_head_attention_forward.337]() {
+  %1([CNode]418) = $(↓multi_head_attention_forward.337):Primitive::getattr{prim_type=1}(%para36_фquery, "shape")
+      :(<Tensor[Float32], (10, 8, 128)>, <String, NoShape>) -> (<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:279/    tgt_len, bsz, embed_dim = query.shape/
+  %2(фembed_dim) = $(↓multi_head_attention_forward.337):DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%1, I64(2))
+      :(<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:420/    attn_output = attn_output.transpose(2, 0, 1, 3).view(bsz * tgt_len, embed_dim)/
+  %3([CNode]423) = Primitive::joinedstr{prim_type=1}("was expecting embedding dimension of ", %para20_фembed_dim_to_check, ", but got ", %2)
+      :(<String, NoShape>, <Int64, NoShape>, <String, NoShape>, <Int64, NoShape>) -> (<String, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:287/        f"was expecting embedding dimension of {embed_dim_to_check}, but got {embed_dim}")/
+  %4([CNode]424) = DoSignaturePrimitive::S-Prim-assert_info{prim_type=1}(%2, %para20_фembed_dim_to_check, %3)
+      :(<Int64, NoShape>, <Int64, NoShape>, <String, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:286/    assert_info(embed_dim, embed_dim_to_check, \/
+  %5(фhead_dim) = DoSignaturePrimitive::S-Prim-floordiv{prim_type=1}(%2, %para21_фnum_heads)
+      :(<Int64, NoShape>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:414/    q = q.view(bsz, num_heads, tgt_len, head_dim)/
+  %6([CNode]425) = DoSignaturePrimitive::S-Prim-mul{prim_type=1}(%5, %para21_фnum_heads)
+      :(<Int64, NoShape>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:290/    assert_info(head_dim * num_heads, embed_dim, f"embed_dim {embed_dim} not divisible by num_heads {num_heads}")/
+  %7([CNode]426) = Primitive::joinedstr{prim_type=1}("embed_dim ", %2, " not divisible by num_heads ", %para21_фnum_heads)
+      :(<String, NoShape>, <Int64, NoShape>, <String, NoShape>, <Int64, NoShape>) -> (<String, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:290/    assert_info(head_dim * num_heads, embed_dim, f"embed_dim {embed_dim} not divisible by num_heads {num_heads}")/
+  %8([CNode]427) = DoSignaturePrimitive::S-Prim-assert_info{prim_type=1}(%6, %2, %7)
+      :(<Int64, NoShape>, <Int64, NoShape>, <String, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:290/    assert_info(head_dim * num_heads, embed_dim, f"embed_dim {embed_dim} not divisible by num_heads {num_heads}")/
+  %9([CNode]428) = Primitive::MakeTuple{prim_type=1}(%4, %8)
+      :(<None, NoShape>, <None, NoShape>) -> (<Tuple[None*2], TupleShape(NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %10([CNode]429) = Primitive::StopGradient{prim_type=1}(%9)
+      :(<Tuple[None*2], TupleShape(NoShape, NoShape)>) -> (<Tuple[None*2], TupleShape(NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %11([CNode]430) = call @bool_.302(Bool(0))
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:291/    if use_separate_proj_weight:/
+  %12([CNode]431) = Primitive::Switch{prim_type=1}(%11, call @✓↓↓multi_head_attention_forward.432, call @✗↓↓multi_head_attention_forward.340)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:291/    if use_separate_proj_weight:/
+
+#------------------------> 10
+  %13([CNode]433) = %12()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:291/    if use_separate_proj_weight:/
+  %14([CNode]434) = Primitive::Depend{prim_type=1}[side_effect_propagate=I64(1)](%13, %10)
+      :(<null>, <Tuple[None*2], TupleShape(NoShape, NoShape)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%14)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:291/    if use_separate_proj_weight:/
+}
+# order:
+#   1: @↓↓multi_head_attention_forward.339:[CNode]424{[0]: ValueNode<DoSignaturePrimitive> S-Prim-assert_info, [1]: фembed_dim, [2]: фembed_dim_to_check, [3]: [CNode]423}
+#   2: @↓↓multi_head_attention_forward.339:фhead_dim{[0]: ValueNode<DoSignaturePrimitive> S-Prim-floordiv, [1]: фembed_dim, [2]: фnum_heads}
+#   3: @↓↓multi_head_attention_forward.339:[CNode]425{[0]: ValueNode<DoSignaturePrimitive> S-Prim-mul, [1]: фhead_dim, [2]: фnum_heads}
+#   4: @↓↓multi_head_attention_forward.339:[CNode]427{[0]: ValueNode<DoSignaturePrimitive> S-Prim-assert_info, [1]: [CNode]425, [2]: фembed_dim, [3]: [CNode]426}
+#   5: @↓↓multi_head_attention_forward.339:[CNode]430{[0]: ValueNode<FuncGraph> bool_.302, [1]: ValueNode<BoolImm> false}
+#   6: @↓↓multi_head_attention_forward.339:[CNode]431{[0]: ValueNode<Primitive> Switch, [1]: [CNode]430, [2]: ValueNode<FuncGraph> ✓↓↓multi_head_attention_forward.432, [3]: ValueNode<FuncGraph> ✗↓↓multi_head_attention_forward.340}
+#   7: @↓↓multi_head_attention_forward.339:[CNode]433{[0]: [CNode]431}
+#   8: @↓↓multi_head_attention_forward.339:[CNode]435{[0]: ValueNode<Primitive> Return, [1]: [CNode]434}
+
+
+subgraph attr:
+subgraph instance: ✗↓↓multi_head_attention_forward.340 : 0x7fe4876edc18
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:291/    if use_separate_proj_weight:/
+subgraph @✗↓↓multi_head_attention_forward.340 parent: [subgraph @↓↓multi_head_attention_forward.339]() {
+  %1([CNode]436) = Primitive::getattr{prim_type=1}(%para37_фkey, "shape")
+      :(<Tensor[Float32], (10, 8, 128)>, <String, NoShape>) -> (<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:296/        assert_info(key.shape, value.shape, f"key shape {key.shape} does not match value shape {value.shape}")/
+  %2([CNode]437) = Primitive::getattr{prim_type=1}(%para39_фvalue, "shape")
+      :(<Tensor[Float32], (10, 8, 128)>, <String, NoShape>) -> (<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:296/        assert_info(key.shape, value.shape, f"key shape {key.shape} does not match value shape {value.shape}")/
+  %3([CNode]438) = Primitive::getattr{prim_type=1}(%para37_фkey, "shape")
+      :(<Tensor[Float32], (10, 8, 128)>, <String, NoShape>) -> (<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:0/
+  %4([CNode]439) = Primitive::getattr{prim_type=1}(%para39_фvalue, "shape")
+      :(<Tensor[Float32], (10, 8, 128)>, <String, NoShape>) -> (<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:0/
+  %5([CNode]440) = Primitive::joinedstr{prim_type=1}("key shape ", %3, " does not match value shape ", %4)
+      :(<String, NoShape>, <Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <String, NoShape>, <Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>) -> (<String, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:296/        assert_info(key.shape, value.shape, f"key shape {key.shape} does not match value shape {value.shape}")/
+  %6([CNode]441) = DoSignaturePrimitive::S-Prim-assert_info{prim_type=1}(%1, %2, %5)
+      :(<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <String, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:296/        assert_info(key.shape, value.shape, f"key shape {key.shape} does not match value shape {value.shape}")/
+  %7([CNode]442) = Primitive::StopGradient{prim_type=1}(%6)
+      :(<None, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+
+#------------------------> 11
+  %8([CNode]443) = call @↓↓↓multi_head_attention_forward.341()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %9([CNode]444) = Primitive::Depend{prim_type=1}[side_effect_propagate=I64(1)](%8, %7)
+      :(<null>, <None, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%9)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:291/    if use_separate_proj_weight:/
+}
+# order:
+#   1: @✗↓↓multi_head_attention_forward.340:[CNode]436{[0]: ValueNode<Primitive> getattr, [1]: фkey, [2]: ValueNode<StringImm> shape}
+#   2: @✗↓↓multi_head_attention_forward.340:[CNode]437{[0]: ValueNode<Primitive> getattr, [1]: фvalue, [2]: ValueNode<StringImm> shape}
+#   3: @✗↓↓multi_head_attention_forward.340:[CNode]438{[0]: ValueNode<Primitive> getattr, [1]: фkey, [2]: ValueNode<StringImm> shape}
+#   4: @✗↓↓multi_head_attention_forward.340:[CNode]439{[0]: ValueNode<Primitive> getattr, [1]: фvalue, [2]: ValueNode<StringImm> shape}
+#   5: @✗↓↓multi_head_attention_forward.340:[CNode]441{[0]: ValueNode<DoSignaturePrimitive> S-Prim-assert_info, [1]: [CNode]436, [2]: [CNode]437, [3]: [CNode]440}
+#   6: @✗↓↓multi_head_attention_forward.340:[CNode]445{[0]: ValueNode<Primitive> Return, [1]: [CNode]444}
+#   7: @✗↓↓multi_head_attention_forward.340:[CNode]443{[0]: ValueNode<FuncGraph> ↓↓↓multi_head_attention_forward.341}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓multi_head_attention_forward.341 : 0x7fe4876d3218
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:291/    if use_separate_proj_weight:/
+subgraph @↓↓↓multi_head_attention_forward.341 parent: [subgraph @↓↓multi_head_attention_forward.339]() {
+  %1([CNode]446) = DoSignaturePrimitive::S-Prim-logical_not{prim_type=1}(Bool(0))
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:301/    if not use_separate_proj_weight:/
+  %2([CNode]447) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:301/    if not use_separate_proj_weight:/
+  %3([CNode]448) = Primitive::Switch{prim_type=1}(%2, call @✓↓↓↓multi_head_attention_forward.449, call @✗↓↓↓multi_head_attention_forward.450)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:301/    if not use_separate_proj_weight:/
+  %4([CNode]451) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:301/    if not use_separate_proj_weight:/
+  %5([CNode]452) = Primitive::TupleGetItem{prim_type=1}(%4, I64(0))
+      :(<Tuple[Tensor[Float32]*3], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %6([CNode]453) = Primitive::TupleGetItem{prim_type=1}(%4, I64(1))
+      :(<Tuple[Tensor[Float32]*3], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %7([CNode]454) = Primitive::TupleGetItem{prim_type=1}(%4, I64(2))
+      :(<Tuple[Tensor[Float32]*3], TupleShape((10, 8, 128), (10, 8, 128), (10, 8, 128))>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+
+#------------------------> 12
+  %8([CNode]455) = call @↓↓↓↓multi_head_attention_forward.342(%5, %6, %7)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%8)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:301/    if not use_separate_proj_weight:/
+}
+# order:
+#   1: @↓↓↓multi_head_attention_forward.341:[CNode]446{[0]: ValueNode<DoSignaturePrimitive> S-Prim-logical_not, [1]: ValueNode<BoolImm> false}
+#   2: @↓↓↓multi_head_attention_forward.341:[CNode]447{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]446}
+#   3: @↓↓↓multi_head_attention_forward.341:[CNode]448{[0]: ValueNode<Primitive> Switch, [1]: [CNode]447, [2]: ValueNode<FuncGraph> ✓↓↓↓multi_head_attention_forward.449, [3]: ValueNode<FuncGraph> ✗↓↓↓multi_head_attention_forward.450}
+#   4: @↓↓↓multi_head_attention_forward.341:[CNode]451{[0]: [CNode]448}
+#   5: @↓↓↓multi_head_attention_forward.341:[CNode]455{[0]: ValueNode<FuncGraph> ↓↓↓↓multi_head_attention_forward.342, [1]: [CNode]452, [2]: [CNode]453, [3]: [CNode]454}
+#   6: @↓↓↓multi_head_attention_forward.341:[CNode]456{[0]: ValueNode<Primitive> Return, [1]: [CNode]455}
+#   7: @↓↓↓multi_head_attention_forward.341:[CNode]452{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]451, [2]: ValueNode<Int64Imm> 0}
+#   8: @↓↓↓multi_head_attention_forward.341:[CNode]453{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]451, [2]: ValueNode<Int64Imm> 1}
+#   9: @↓↓↓multi_head_attention_forward.341:[CNode]454{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]451, [2]: ValueNode<Int64Imm> 2}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓multi_head_attention_forward.342 : 0x7fe4876f8418
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:301/    if not use_separate_proj_weight:/
+subgraph @↓↓↓↓multi_head_attention_forward.342 parent: [subgraph @↓↓multi_head_attention_forward.339](%para40_, %para41_, %para42_) {
+  %1([CNode]399) = $(multi_head_attention_forward.336):Primitive::extract_keyword_arg{prim_type=1}("attn_mask", %para32_фattn_mask)
+      :(<String, NoShape>, <Keyword[key : attn_maskvalue : None], NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+  %2([CNode]457) = DoSignaturePrimitive::S-Prim-is_not{prim_type=1}(%1, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:315/    if attn_mask is not None:/
+  %3([CNode]458) = call @bool_.302(%2)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:315/    if attn_mask is not None:/
+  %4([CNode]459) = Primitive::Switch{prim_type=1}(%3, call @✓↓↓↓↓multi_head_attention_forward.460, call @✗↓↓↓↓multi_head_attention_forward.461)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:315/    if attn_mask is not None:/
+  %5([CNode]462) = %4()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:315/    if attn_mask is not None:/
+
+#------------------------> 13
+  %6([CNode]463) = call @↓↓↓↓↓multi_head_attention_forward.343(%5)
+      :(<None, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%6)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:315/    if attn_mask is not None:/
+}
+# order:
+#   1: @↓↓↓↓multi_head_attention_forward.342:[CNode]457{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_not, [1]: [CNode]399, [2]: ValueNode<None> None}
+#   2: @↓↓↓↓multi_head_attention_forward.342:[CNode]458{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]457}
+#   3: @↓↓↓↓multi_head_attention_forward.342:[CNode]459{[0]: ValueNode<Primitive> Switch, [1]: [CNode]458, [2]: ValueNode<FuncGraph> ✓↓↓↓↓multi_head_attention_forward.460, [3]: ValueNode<FuncGraph> ✗↓↓↓↓multi_head_attention_forward.461}
+#   4: @↓↓↓↓multi_head_attention_forward.342:[CNode]462{[0]: [CNode]459}
+#   5: @↓↓↓↓multi_head_attention_forward.342:[CNode]463{[0]: ValueNode<FuncGraph> ↓↓↓↓↓multi_head_attention_forward.343, [1]: [CNode]462}
+#   6: @↓↓↓↓multi_head_attention_forward.342:[CNode]464{[0]: ValueNode<Primitive> Return, [1]: [CNode]463}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓multi_head_attention_forward.343 : 0x7fe4876fde18
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:315/    if attn_mask is not None:/
+subgraph @↓↓↓↓↓multi_head_attention_forward.343 parent: [subgraph @↓↓↓↓multi_head_attention_forward.342](%para43_) {
+  %1([CNode]465) = DoSignaturePrimitive::S-Prim-is_not{prim_type=1}(%para24_фbias_k, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+  %2([CNode]466) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+  %3([CNode]467) = Primitive::Switch{prim_type=1}(%2, call @↰↓↓↓↓↓multi_head_attention_forward.468, call @↱↓↓↓↓↓multi_head_attention_forward.469)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+  %4([CNode]470) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+  %5([CNode]471) = call @bool_.302(%4)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+  %6([CNode]472) = Primitive::Switch{prim_type=1}(%5, call @✓↓↓↓↓↓multi_head_attention_forward.473, call @✗↓↓↓↓↓multi_head_attention_forward.474)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+  %7([CNode]475) = %6()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+  %8([CNode]476) = Primitive::TupleGetItem{prim_type=1}(%7, I64(0))
+      :(<Tuple[Tensor[Float32]*2,None*2], TupleShape((10, 8, 128), (10, 8, 128), NoShape, NoShape)>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %9([CNode]477) = Primitive::TupleGetItem{prim_type=1}(%7, I64(1))
+      :(<Tuple[Tensor[Float32]*2,None*2], TupleShape((10, 8, 128), (10, 8, 128), NoShape, NoShape)>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 8, 128)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %10([CNode]478) = Primitive::TupleGetItem{prim_type=1}(%7, I64(2))
+      :(<Tuple[Tensor[Float32]*2,None*2], TupleShape((10, 8, 128), (10, 8, 128), NoShape, NoShape)>, <Int64, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %11([CNode]479) = Primitive::TupleGetItem{prim_type=1}(%7, I64(3))
+      :(<Tuple[Tensor[Float32]*2,None*2], TupleShape((10, 8, 128), (10, 8, 128), NoShape, NoShape)>, <Int64, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+
+#------------------------> 14
+  %12([CNode]480) = call @↓↓↓↓↓↓multi_head_attention_forward.344(%8, %9, %10, %11)
+      :(<Tensor[Float32], (10, 8, 128)>, <Tensor[Float32], (10, 8, 128)>, <None, NoShape>, <None, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%12)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+}
+# order:
+#   1: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]465{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_not, [1]: фbias_k, [2]: ValueNode<None> None}
+#   2: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]466{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]465}
+#   3: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]467{[0]: ValueNode<Primitive> Switch, [1]: [CNode]466, [2]: ValueNode<FuncGraph> ↰↓↓↓↓↓multi_head_attention_forward.468, [3]: ValueNode<FuncGraph> ↱↓↓↓↓↓multi_head_attention_forward.469}
+#   4: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]470{[0]: [CNode]467}
+#   5: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]471{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]470}
+#   6: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]472{[0]: ValueNode<Primitive> Switch, [1]: [CNode]471, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓multi_head_attention_forward.473, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓multi_head_attention_forward.474}
+#   7: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]475{[0]: [CNode]472}
+#   8: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]480{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓multi_head_attention_forward.344, [1]: [CNode]476, [2]: [CNode]477, [3]: [CNode]478, [4]: [CNode]479}
+#   9: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]481{[0]: ValueNode<Primitive> Return, [1]: [CNode]480}
+#  10: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]476{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]475, [2]: ValueNode<Int64Imm> 0}
+#  11: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]477{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]475, [2]: ValueNode<Int64Imm> 1}
+#  12: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]478{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]475, [2]: ValueNode<Int64Imm> 2}
+#  13: @↓↓↓↓↓multi_head_attention_forward.343:[CNode]479{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]475, [2]: ValueNode<Int64Imm> 3}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓↓multi_head_attention_forward.344 : 0x7fe45402ac18
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:336/    if bias_k is not None and bias_v is not None:/
+subgraph @↓↓↓↓↓↓multi_head_attention_forward.344 parent: [subgraph @↓↓↓↓multi_head_attention_forward.342](%para44_, %para45_, %para46_, %para47_) {
+  %1([CNode]482) = DoSignaturePrimitive::S-Prim-is_{prim_type=1}(None, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:353/    if static_k is None:/
+  %2([CNode]483) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:353/    if static_k is None:/
+  %3([CNode]484) = Primitive::Switch{prim_type=1}(%2, call @✓↓↓↓↓↓↓multi_head_attention_forward.485, call @✗↓↓↓↓↓↓multi_head_attention_forward.486)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:353/    if static_k is None:/
+  %4([CNode]487) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:353/    if static_k is None:/
+
+#------------------------> 15
+  %5([CNode]488) = call @↓↓↓↓↓↓↓multi_head_attention_forward.345(%4)
+      :(<Tensor[Float32], (64, 10, 16)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%5)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:353/    if static_k is None:/
+}
+# order:
+#   1: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]489{[0]: ValueNode<Primitive> getattr, [1]: фq, [2]: ValueNode<StringImm> view}
+#   2: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]490{[0]: ValueNode<DoSignaturePrimitive> S-Prim-mul, [1]: фbsz, [2]: фnum_heads}
+#   3: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]491{[0]: [CNode]489, [1]: фtgt_len, [2]: [CNode]490, [3]: фhead_dim}
+#   4: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]492{[0]: ValueNode<Primitive> getattr, [1]: [CNode]491, [2]: ValueNode<StringImm> swapaxes}
+#   5: @↓↓↓↓↓↓multi_head_attention_forward.344:фq{[0]: [CNode]492, [1]: ValueNode<Int64Imm> 0, [2]: ValueNode<Int64Imm> 1}
+#   6: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]482{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_, [1]: ValueNode<None> None, [2]: ValueNode<None> None}
+#   7: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]483{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]482}
+#   8: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]484{[0]: ValueNode<Primitive> Switch, [1]: [CNode]483, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓↓multi_head_attention_forward.485, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓↓multi_head_attention_forward.486}
+#   9: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]487{[0]: [CNode]484}
+#  10: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]488{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓↓multi_head_attention_forward.345, [1]: [CNode]487}
+#  11: @↓↓↓↓↓↓multi_head_attention_forward.344:[CNode]493{[0]: ValueNode<Primitive> Return, [1]: [CNode]488}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓↓↓multi_head_attention_forward.345 : 0x7fe45402b818
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:353/    if static_k is None:/
+subgraph @↓↓↓↓↓↓↓multi_head_attention_forward.345 parent: [subgraph @↓↓↓↓↓↓multi_head_attention_forward.344](%para48_) {
+  %1([CNode]494) = DoSignaturePrimitive::S-Prim-is_{prim_type=1}(None, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:362/    if static_v is None:/
+  %2([CNode]495) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:362/    if static_v is None:/
+  %3([CNode]496) = Primitive::Switch{prim_type=1}(%2, call @✓↓↓↓↓↓↓↓multi_head_attention_forward.497, call @✗↓↓↓↓↓↓↓multi_head_attention_forward.498)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:362/    if static_v is None:/
+  %4([CNode]499) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:362/    if static_v is None:/
+
+#------------------------> 16
+  %5([CNode]500) = call @↓↓↓↓↓↓↓↓multi_head_attention_forward.346(%4)
+      :(<Tensor[Float32], (64, 10, 16)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%5)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:362/    if static_v is None:/
+}
+# order:
+#   1: @↓↓↓↓↓↓↓multi_head_attention_forward.345:[CNode]494{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_, [1]: ValueNode<None> None, [2]: ValueNode<None> None}
+#   2: @↓↓↓↓↓↓↓multi_head_attention_forward.345:[CNode]495{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]494}
+#   3: @↓↓↓↓↓↓↓multi_head_attention_forward.345:[CNode]496{[0]: ValueNode<Primitive> Switch, [1]: [CNode]495, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓↓↓multi_head_attention_forward.497, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓↓↓multi_head_attention_forward.498}
+#   4: @↓↓↓↓↓↓↓multi_head_attention_forward.345:[CNode]499{[0]: [CNode]496}
+#   5: @↓↓↓↓↓↓↓multi_head_attention_forward.345:[CNode]500{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓↓↓multi_head_attention_forward.346, [1]: [CNode]499}
+#   6: @↓↓↓↓↓↓↓multi_head_attention_forward.345:[CNode]501{[0]: ValueNode<Primitive> Return, [1]: [CNode]500}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓↓↓↓multi_head_attention_forward.346 : 0x7fe45402ca18
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:362/    if static_v is None:/
+subgraph @↓↓↓↓↓↓↓↓multi_head_attention_forward.346 parent: [subgraph @↓↓↓↓↓↓↓multi_head_attention_forward.345](%para49_) {
+  %1([CNode]502) = call @bool_.302(%para26_фadd_zero_attn)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:373/    if add_zero_attn:/
+  %2([CNode]503) = Primitive::Switch{prim_type=1}(%1, call @✓↓↓↓↓↓↓↓↓multi_head_attention_forward.504, call @✗↓↓↓↓↓↓↓↓multi_head_attention_forward.505)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:373/    if add_zero_attn:/
+  %3([CNode]506) = %2()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:373/    if add_zero_attn:/
+  %4([CNode]507) = Primitive::TupleGetItem{prim_type=1}(%3, I64(0))
+      :(<Tuple[Tensor[Float32],None*2,Tensor[Float32]], TupleShape((64, 10, 16), NoShape, NoShape, (64, 10, 16))>, <Int64, NoShape>) -> (<Tensor[Float32], (64, 10, 16)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %5([CNode]508) = Primitive::TupleGetItem{prim_type=1}(%3, I64(1))
+      :(<Tuple[Tensor[Float32],None*2,Tensor[Float32]], TupleShape((64, 10, 16), NoShape, NoShape, (64, 10, 16))>, <Int64, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %6([CNode]509) = Primitive::TupleGetItem{prim_type=1}(%3, I64(2))
+      :(<Tuple[Tensor[Float32],None*2,Tensor[Float32]], TupleShape((64, 10, 16), NoShape, NoShape, (64, 10, 16))>, <Int64, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  %7([CNode]510) = Primitive::TupleGetItem{prim_type=1}(%3, I64(3))
+      :(<Tuple[Tensor[Float32],None*2,Tensor[Float32]], TupleShape((64, 10, 16), NoShape, NoShape, (64, 10, 16))>, <Int64, NoShape>) -> (<Tensor[Float32], (64, 10, 16)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+
+#------------------------> 17
+  %8([CNode]511) = call @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347(%4, %5, %6, %7)
+      :(<Tensor[Float32], (64, 10, 16)>, <None, NoShape>, <None, NoShape>, <Tensor[Float32], (64, 10, 16)>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%8)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:373/    if add_zero_attn:/
+}
+# order:
+#   1: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]502{[0]: ValueNode<FuncGraph> bool_.302, [1]: фadd_zero_attn}
+#   2: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]503{[0]: ValueNode<Primitive> Switch, [1]: [CNode]502, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓↓↓↓multi_head_attention_forward.504, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓↓↓↓multi_head_attention_forward.505}
+#   3: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]506{[0]: [CNode]503}
+#   4: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]511{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347, [1]: [CNode]507, [2]: [CNode]508, [3]: [CNode]509, [4]: [CNode]510}
+#   5: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]512{[0]: ValueNode<Primitive> Return, [1]: [CNode]511}
+#   6: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]507{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]506, [2]: ValueNode<Int64Imm> 0}
+#   7: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]508{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]506, [2]: ValueNode<Int64Imm> 1}
+#   8: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]509{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]506, [2]: ValueNode<Int64Imm> 2}
+#   9: @↓↓↓↓↓↓↓↓multi_head_attention_forward.346:[CNode]510{[0]: ValueNode<Primitive> TupleGetItem, [1]: [CNode]506, [2]: ValueNode<Int64Imm> 3}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347 : 0x7fe45403e618
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:373/    if add_zero_attn:/
+subgraph @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347 parent: [subgraph @↓↓↓↓↓↓multi_head_attention_forward.344](%para50_, %para51_, %para52_, %para53_) {
+  %1([CNode]513) = DoSignaturePrimitive::S-Prim-is_not{prim_type=1}(%para51_фkey_padding_mask, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:386/    if key_padding_mask is not None:/
+  %2([CNode]514) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:386/    if key_padding_mask is not None:/
+  %3([CNode]515) = Primitive::Switch{prim_type=1}(%2, call @✓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.516, call @✗↓↓↓↓↓↓↓↓↓multi_head_attention_forward.517)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:386/    if key_padding_mask is not None:/
+  %4([CNode]518) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:386/    if key_padding_mask is not None:/
+
+#------------------------> 18
+  %5([CNode]519) = call @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348(%4)
+      :(<None, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%5)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:386/    if key_padding_mask is not None:/
+}
+# order:
+#   1: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:[CNode]520{[0]: ValueNode<Primitive> getattr, [1]: фk, [2]: ValueNode<StringImm> shape}
+#   2: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:фsrc_len{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]520, [2]: ValueNode<Int64Imm> 1}
+#   3: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:[CNode]513{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_not, [1]: фkey_padding_mask, [2]: ValueNode<None> None}
+#   4: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:[CNode]514{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]513}
+#   5: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:[CNode]515{[0]: ValueNode<Primitive> Switch, [1]: [CNode]514, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.516, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓↓↓↓↓multi_head_attention_forward.517}
+#   6: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:[CNode]518{[0]: [CNode]515}
+#   7: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:[CNode]519{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348, [1]: [CNode]518}
+#   8: @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347:[CNode]521{[0]: ValueNode<Primitive> Return, [1]: [CNode]519}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348 : 0x7fe454049818
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:386/    if key_padding_mask is not None:/
+subgraph @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348 parent: [subgraph @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347](%para54_) {
+  %1([CNode]522) = DoSignaturePrimitive::S-Prim-is_not{prim_type=1}(%para54_фattn_mask, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+  %2([CNode]523) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+  %3([CNode]524) = Primitive::Switch{prim_type=1}(%2, call @↰↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.525, call @↱↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.526)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+  %4([CNode]527) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+  %5([CNode]528) = call @bool_.302(%4)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+  %6([CNode]529) = Primitive::Switch{prim_type=1}(%5, call @✓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.530, call @✗↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.531)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+  %7([CNode]532) = %6()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+
+#------------------------> 19
+  %8([CNode]533) = call @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349(%7)
+      :(<None, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%8)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+}
+# order:
+#   1: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]522{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_not, [1]: фattn_mask, [2]: ValueNode<None> None}
+#   2: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]523{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]522}
+#   3: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]524{[0]: ValueNode<Primitive> Switch, [1]: [CNode]523, [2]: ValueNode<FuncGraph> ↰↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.525, [3]: ValueNode<FuncGraph> ↱↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.526}
+#   4: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]527{[0]: [CNode]524}
+#   5: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]528{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]527}
+#   6: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]529{[0]: ValueNode<Primitive> Switch, [1]: [CNode]528, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.530, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.531}
+#   7: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]532{[0]: [CNode]529}
+#   8: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]533{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349, [1]: [CNode]532}
+#   9: @↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.348:[CNode]534{[0]: ValueNode<Primitive> Return, [1]: [CNode]533}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349 : 0x7fe454046a18
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:399/    if attn_mask is not None and attn_mask.dtype == mindspore.bool_:/
+subgraph @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349 parent: [subgraph @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347](%para55_) {
+  %1([CNode]535) = DoSignaturePrimitive::S-Prim-is_not{prim_type=1}(%para55_фattn_mask, None)
+      :(<None, NoShape>, <None, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:408/    if attn_mask is not None:/
+  %2([CNode]536) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:408/    if attn_mask is not None:/
+  %3([CNode]537) = Primitive::Switch{prim_type=1}(%2, call @✓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.538, call @✗↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.539)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:408/    if attn_mask is not None:/
+  %4([CNode]540) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:408/    if attn_mask is not None:/
+
+#------------------------> 20
+  %5([CNode]541) = call @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350(%4)
+      :(<None, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%5)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:408/    if attn_mask is not None:/
+}
+# order:
+#   1: @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349:[CNode]535{[0]: ValueNode<DoSignaturePrimitive> S-Prim-is_not, [1]: фattn_mask, [2]: ValueNode<None> None}
+#   2: @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349:[CNode]536{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]535}
+#   3: @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349:[CNode]537{[0]: ValueNode<Primitive> Switch, [1]: [CNode]536, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.538, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.539}
+#   4: @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349:[CNode]540{[0]: [CNode]537}
+#   5: @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349:[CNode]541{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350, [1]: [CNode]540}
+#   6: @↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.349:[CNode]542{[0]: ValueNode<Primitive> Return, [1]: [CNode]541}
+
+
+subgraph attr:
+after_block : 1
+subgraph instance: ↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350 : 0x7fe48762ca18
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:408/    if attn_mask is not None:/
+subgraph @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350 parent: [subgraph @↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347](%para56_) {
+  %1([CNode]543) = $(multi_head_attention_forward.336):Primitive::extract_keyword_arg{prim_type=1}("average_attn_weights", %para33_фaverage_attn_weights)
+      :(<String, NoShape>, <Keyword[key : average_attn_weightsvalue : Bool], NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+  %2([CNode]544) = call @bool_.302(%1)
+      :(<Bool, NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:427/    if average_attn_weights:/
+  %3([CNode]545) = Primitive::Switch{prim_type=1}(%2, call @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351, call @✗↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.546)
+      :(<Bool, NoShape>, <Func, NoShape>, <Func, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:427/    if average_attn_weights:/
+
+#------------------------> 21
+  %4([CNode]547) = %3()
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:427/    if average_attn_weights:/
+  %5([CNode]549) = call @↓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.548(%4)
+      :(<null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/nn.py:139/            attn_output, attn_output_weights = multi_head_attention_forward(/
+  Primitive::Return{prim_type=1}(%5)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:427/    if average_attn_weights:/
+}
+# order:
+#   1: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]550{[0]: ValueNode<Primitive> getattr, [1]: фq, [2]: ValueNode<StringImm> view}
+#   2: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:q{[0]: [CNode]550, [1]: фbsz, [2]: фnum_heads, [3]: фtgt_len, [4]: фhead_dim}
+#   3: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]551{[0]: ValueNode<Primitive> getattr, [1]: фk, [2]: ValueNode<StringImm> view}
+#   4: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:k{[0]: [CNode]551, [1]: фbsz, [2]: фnum_heads, [3]: фsrc_len, [4]: фhead_dim}
+#   5: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]552{[0]: ValueNode<Primitive> getattr, [1]: фv, [2]: ValueNode<StringImm> view}
+#   6: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:v{[0]: [CNode]552, [1]: фbsz, [2]: фnum_heads, [3]: фsrc_len, [4]: фhead_dim}
+#   7: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]553{[0]: ValueNode<FuncGraph> _scaled_dot_product_attention.326, [1]: q, [2]: k, [3]: v, [4]: фattn_mask, [5]: фdropout_p, [6]: ValueNode<BoolImm> false, [7]: [CNode]554}
+#   8: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:attn_output{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]553, [2]: ValueNode<Int64Imm> 0}
+#   9: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:attn_output_weights{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]553, [2]: ValueNode<Int64Imm> 1}
+#  10: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]555{[0]: ValueNode<Primitive> getattr, [1]: attn_output, [2]: ValueNode<StringImm> transpose}
+#  11: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]556{[0]: [CNode]555, [1]: ValueNode<Int64Imm> 2, [2]: ValueNode<Int64Imm> 0, [3]: ValueNode<Int64Imm> 1, [4]: ValueNode<Int64Imm> 3}
+#  12: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]557{[0]: ValueNode<Primitive> getattr, [1]: [CNode]556, [2]: ValueNode<StringImm> view}
+#  13: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]558{[0]: ValueNode<DoSignaturePrimitive> S-Prim-mul, [1]: фbsz, [2]: фtgt_len}
+#  14: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:attn_output{[0]: [CNode]557, [1]: [CNode]558, [2]: фembed_dim}
+#  15: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:attn_output{[0]: ValueNode<FuncGraph> linear.323, [1]: attn_output, [2]: фout_proj_weight, [3]: фout_proj_bias}
+#  16: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]559{[0]: ValueNode<Primitive> getattr, [1]: attn_output, [2]: ValueNode<StringImm> view}
+#  17: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]560{[0]: ValueNode<Primitive> getattr, [1]: attn_output, [2]: ValueNode<StringImm> shape}
+#  18: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]561{[0]: ValueNode<DoSignaturePrimitive> S-Prim-getitem, [1]: [CNode]560, [2]: ValueNode<Int64Imm> 1}
+#  19: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:фattn_output{[0]: [CNode]559, [1]: фtgt_len, [2]: фbsz, [3]: [CNode]561}
+#  20: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]562{[0]: ValueNode<Primitive> getattr, [1]: attn_output_weights, [2]: ValueNode<StringImm> view}
+#  21: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:attn_output_weights{[0]: [CNode]562, [1]: фbsz, [2]: фnum_heads, [3]: фtgt_len, [4]: фsrc_len}
+#  22: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]544{[0]: ValueNode<FuncGraph> bool_.302, [1]: [CNode]543}
+#  23: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]545{[0]: ValueNode<Primitive> Switch, [1]: [CNode]544, [2]: ValueNode<FuncGraph> ✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351, [3]: ValueNode<FuncGraph> ✗↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.546}
+#  24: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]547{[0]: [CNode]545}
+#  25: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]549{[0]: ValueNode<FuncGraph> ↓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.548, [1]: [CNode]547}
+#  26: @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350:[CNode]563{[0]: ValueNode<Primitive> Return, [1]: [CNode]549}
+
+
+subgraph attr:
+subgraph instance: ✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351 : 0x7fe48762de18
+# In file /Users/lvyufeng/Projects/Transformer/src/ops.py:427/    if average_attn_weights:/
+subgraph @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351 parent: [subgraph @↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350]() {
+  %1([CNode]489) = $(↓↓↓↓↓↓multi_head_attention_forward.344):Primitive::getattr{prim_type=1}(%para42_фq, "view")
+      :(<Tensor[Float32], (10, 8, 128)>, <String, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:352/    q = q.view(tgt_len, bsz * num_heads, head_dim).swapaxes(0, 1)/
+  %2([CNode]418) = $(↓multi_head_attention_forward.337):Primitive::getattr{prim_type=1}(%para36_фquery, "shape")
+      :(<Tensor[Float32], (10, 8, 128)>, <String, NoShape>) -> (<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:279/    tgt_len, bsz, embed_dim = query.shape/
+  %3(фtgt_len) = $(↓multi_head_attention_forward.337):DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%2, I64(0))
+      :(<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:414/    q = q.view(bsz, num_heads, tgt_len, head_dim)/
+  %4(фbsz) = $(↓multi_head_attention_forward.337):DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%2, I64(1))
+      :(<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:414/    q = q.view(bsz, num_heads, tgt_len, head_dim)/
+  %5([CNode]490) = $(↓↓↓↓↓↓multi_head_attention_forward.344):DoSignaturePrimitive::S-Prim-mul{prim_type=1}(%4, %para21_фnum_heads)
+      :(<Int64, NoShape>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:352/    q = q.view(tgt_len, bsz * num_heads, head_dim).swapaxes(0, 1)/
+  %6(фembed_dim) = $(↓multi_head_attention_forward.337):DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%2, I64(2))
+      :(<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:420/    attn_output = attn_output.transpose(2, 0, 1, 3).view(bsz * tgt_len, embed_dim)/
+  %7(фhead_dim) = $(↓↓multi_head_attention_forward.339):DoSignaturePrimitive::S-Prim-floordiv{prim_type=1}(%6, %para21_фnum_heads)
+      :(<Int64, NoShape>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:414/    q = q.view(bsz, num_heads, tgt_len, head_dim)/
+  %8([CNode]491) = $(↓↓↓↓↓↓multi_head_attention_forward.344):%1(%3, %5, %7)
+      :(<Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>) -> (<Tensor[Float32], (10, 64, 16)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:352/    q = q.view(tgt_len, bsz * num_heads, head_dim).swapaxes(0, 1)/
+  %9([CNode]492) = $(↓↓↓↓↓↓multi_head_attention_forward.344):Primitive::getattr{prim_type=1}(%8, "swapaxes")
+      :(<Tensor[Float32], (10, 64, 16)>, <String, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:352/    q = q.view(tgt_len, bsz * num_heads, head_dim).swapaxes(0, 1)/
+  %10(фq) = $(↓↓↓↓↓↓multi_head_attention_forward.344):%9(I64(0), I64(1))
+      :(<Int64, NoShape>, <Int64, NoShape>) -> (<Tensor[Float32], (64, 10, 16)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:414/    q = q.view(bsz, num_heads, tgt_len, head_dim)/
+  %11([CNode]550) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):Primitive::getattr{prim_type=1}(%10, "view")
+      :(<Tensor[Float32], (64, 10, 16)>, <String, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:414/    q = q.view(bsz, num_heads, tgt_len, head_dim)/
+  %12(q) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):%11(%4, %para21_фnum_heads, %3, %7)
+      :(<Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>) -> (<Tensor[Float32], (8, 8, 10, 16)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:414/    q = q.view(bsz, num_heads, tgt_len, head_dim)/
+  %13([CNode]551) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):Primitive::getattr{prim_type=1}(%para50_фk, "view")
+      :(<Tensor[Float32], (64, 10, 16)>, <String, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:415/    k = k.view(bsz, num_heads, src_len, head_dim)/
+  %14([CNode]520) = $(↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347):Primitive::getattr{prim_type=1}(%para50_фk, "shape")
+      :(<Tensor[Float32], (64, 10, 16)>, <String, NoShape>) -> (<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:383/    src_len = k.shape[1]/
+  %15(фsrc_len) = $(↓↓↓↓↓↓↓↓↓multi_head_attention_forward.347):DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%14, I64(1))
+      :(<Tuple[Int64*3], TupleShape(NoShape, NoShape, NoShape)>, <Int64, NoShape>) -> (<Int64, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:415/    k = k.view(bsz, num_heads, src_len, head_dim)/
+  %16(k) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):%13(%4, %para21_фnum_heads, %15, %7)
+      :(<Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>) -> (<Tensor[Float32], (8, 8, 10, 16)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:415/    k = k.view(bsz, num_heads, src_len, head_dim)/
+  %17([CNode]552) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):Primitive::getattr{prim_type=1}(%para53_фv, "view")
+      :(<Tensor[Float32], (64, 10, 16)>, <String, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:416/    v = v.view(bsz, num_heads, src_len, head_dim)/
+  %18(v) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):%17(%4, %para21_фnum_heads, %15, %7)
+      :(<Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>) -> (<Tensor[Float32], (8, 8, 10, 16)>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:416/    v = v.view(bsz, num_heads, src_len, head_dim)/
+  %19([CNode]554) = $(multi_head_attention_forward.336):Primitive::extract_keyword_arg{prim_type=1}("training", %para30_фtraining)
+      :(<String, NoShape>, <Keyword[key : trainingvalue : Bool], NoShape>) -> (<Bool, NoShape>)
+      #scope: (Default)
+
+#------------------------> 22
+  %20([CNode]553) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):call @_scaled_dot_product_attention.326(%12, %16, %18, %para56_фattn_mask, %para27_фdropout_p, Bool(0), %19)
+      :(<Tensor[Float32], (8, 8, 10, 16)>, <Tensor[Float32], (8, 8, 10, 16)>, <Tensor[Float32], (8, 8, 10, 16)>, <None, NoShape>, <Float32, NoShape>, <Bool, NoShape>, <Bool, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:418/    attn_output, attn_output_weights = _scaled_dot_product_attention(/
+  %21(attn_output_weights) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):DoSignaturePrimitive::S-Prim-getitem{prim_type=1}(%20, I64(1))
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:418/    attn_output, attn_output_weights = _scaled_dot_product_attention(/
+  %22([CNode]562) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):Primitive::getattr{prim_type=1}(%21, "view")
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:426/    attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)/
+  %23(attn_output_weights) = $(↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.350):%22(%4, %para21_фnum_heads, %3, %15)
+      :(<Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>, <Int64, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:426/    attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)/
+  %24([CNode]564) = Primitive::getattr{prim_type=1}(%23, "sum")
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:428/        attn_output_weights = attn_output_weights.sum(axis=1) / num_heads/
+  %25([CNode]565) = DoSignaturePrimitive::S-Prim-MakeTuple{prim_type=1}("axis")
+      :(<null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:428/        attn_output_weights = attn_output_weights.sum(axis=1) / num_heads/
+  %26([CNode]566) = DoSignaturePrimitive::S-Prim-MakeTuple{prim_type=1}(I64(1))
+      :(<null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:428/        attn_output_weights = attn_output_weights.sum(axis=1) / num_heads/
+  %27([CNode]567) = DoSignaturePrimitive::S-Prim-make_dict{prim_type=1}(%25, %26)
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:428/        attn_output_weights = attn_output_weights.sum(axis=1) / num_heads/
+  %28([CNode]568) = UnpackCall::unpack_call(%24, %27)
+      :(<null>, <null>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:428/        attn_output_weights = attn_output_weights.sum(axis=1) / num_heads/
+  %29(attn_output_weights) = DoSignaturePrimitive::S-Prim-div{prim_type=1}(%28, %para21_фnum_heads)
+      :(<null>, <Int64, NoShape>) -> (<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:428/        attn_output_weights = attn_output_weights.sum(axis=1) / num_heads/
+  Primitive::Return{prim_type=1}(%29)
+      :(<null>)
+      #scope: (Default)
+      # In file /Users/lvyufeng/Projects/Transformer/src/ops.py:427/    if average_attn_weights:/
+}
+# order:
+#   1: @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351:[CNode]564{[0]: ValueNode<Primitive> getattr, [1]: attn_output_weights, [2]: ValueNode<StringImm> sum}
+#   2: @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351:[CNode]565{[0]: ValueNode<DoSignaturePrimitive> S-Prim-MakeTuple, [1]: ValueNode<StringImm> axis}
+#   3: @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351:[CNode]566{[0]: ValueNode<DoSignaturePrimitive> S-Prim-MakeTuple, [1]: ValueNode<Int64Imm> 1}
+#   4: @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351:[CNode]567{[0]: ValueNode<DoSignaturePrimitive> S-Prim-make_dict, [1]: [CNode]565, [2]: [CNode]566}
+#   5: @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351:[CNode]568{[0]: ValueNode<UnpackCall> unpack_call.569, [1]: [CNode]564, [2]: [CNode]567}
+#   6: @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351:attn_output_weights{[0]: ValueNode<DoSignaturePrimitive> S-Prim-div, [1]: [CNode]568, [2]: фnum_heads}
+#   7: @✓↓↓↓↓↓↓↓↓↓↓↓↓multi_head_attention_forward.351:[CNode]570{[0]: ValueNode<Primitive> Return, [1]: attn_output_weights}
+
+
+#===============================================================================
+# num of function graphs in stack: 23
