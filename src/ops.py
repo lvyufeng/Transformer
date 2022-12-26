@@ -1,6 +1,5 @@
 import mindspore
 from mindspore import ops, Tensor
-from mindspore.ops import constexpr
 
 def linear(x, w, b):
     out = ops.matmul(x, w.swapaxes(-1, -2))
@@ -47,13 +46,13 @@ def _in_projection(
          - k': :math:`[Kdims..., Eq]`
          - v': :math:`[Vdims..., Eq]`
     """
-    # Eq, Ek, Ev = q.size(-1), k.size(-1), v.size(-1)
-    # assert w_q.shape == (Eq, Eq), f"expecting query weights shape of {(Eq, Eq)}, but got {w_q.shape}"
-    # assert w_k.shape == (Eq, Ek), f"expecting key weights shape of {(Eq, Ek)}, but got {w_k.shape}"
-    # assert w_v.shape == (Eq, Ev), f"expecting value weights shape of {(Eq, Ev)}, but got {w_v.shape}"
-    # assert b_q is None or b_q.shape == (Eq,), f"expecting query bias shape of {(Eq,)}, but got {b_q.shape}"
-    # assert b_k is None or b_k.shape == (Eq,), f"expecting key bias shape of {(Eq,)}, but got {b_k.shape}"
-    # assert b_v is None or b_v.shape == (Eq,), f"expecting value bias shape of {(Eq,)}, but got {b_v.shape}"
+    Eq, Ek, Ev = q.shape[-1], k.shape[-1], v.shape[-1]
+    assert w_q.shape == (Eq, Eq), f"expecting query weights shape of {(Eq, Eq)}, but got {w_q.shape}"
+    assert w_k.shape == (Eq, Ek), f"expecting key weights shape of {(Eq, Ek)}, but got {w_k.shape}"
+    assert w_v.shape == (Eq, Ev), f"expecting value weights shape of {(Eq, Ev)}, but got {w_v.shape}"
+    assert b_q is None or b_q.shape == (Eq,), f"expecting query bias shape of {(Eq,)}, but got {b_q.shape}"
+    assert b_k is None or b_k.shape == (Eq,), f"expecting key bias shape of {(Eq,)}, but got {b_k.shape}"
+    assert b_v is None or b_v.shape == (Eq,), f"expecting value bias shape of {(Eq,)}, but got {b_v.shape}"
     return linear(q, w_q, b_q), linear(k, w_k, b_k), linear(v, w_v, b_v)
 
 def _in_projection_packed(q, k, v, w, b, k_is_v, q_is_k):
@@ -121,7 +120,6 @@ def _scaled_dot_product_attention(query, key, value, attn_mask, dropout_p, is_ca
 
     return (output, attn)
 
-# @constexpr
 def _mha_shape_check(query, key, value, key_padding_mask, attn_mask, num_heads):
     # Verifies the expected shape for `query, `key`, `value`, `key_padding_mask` and `attn_mask`
     # and returns if the input is batched or not.
@@ -167,11 +165,6 @@ def _mha_shape_check(query, key, value, key_padding_mask, attn_mask, num_heads):
             f"query should be unbatched 2D or batched 3D tensor but received {query.ndim}-D query tensor")
 
     return is_batched
-
-@constexpr
-def assert_info(x, y, info):
-    assert x == y, info
-
 
 def multi_head_attention_forward(
     query,
@@ -283,17 +276,17 @@ def multi_head_attention_forward(
     #     if _kpm_dtype != torch.bool and not torch.is_floating_point(key_padding_mask):
     #         raise AssertionError(
     #             "only bool and floating types of key_padding_mask are supported")
-    assert_info(embed_dim, embed_dim_to_check, \
-        f"was expecting embedding dimension of {embed_dim_to_check}, but got {embed_dim}")
+    assert embed_dim == embed_dim_to_check, \
+        f"was expecting embedding dimension of {embed_dim_to_check}, but got {embed_dim}"
     
     head_dim = embed_dim // num_heads
-    assert_info(head_dim * num_heads, embed_dim, f"embed_dim {embed_dim} not divisible by num_heads {num_heads}")
+    assert head_dim * num_heads == embed_dim, f"embed_dim {embed_dim} not divisible by num_heads {num_heads}"
     if use_separate_proj_weight:
         # allow MHA to have different embedding dimensions when separate projection weights are used
-        assert_info(key.shape[:2], value.shape[:2], \
-            f"key's sequence and batch dims {key.shape[:2]} do not match value's {value.shape[:2]}")
+        assert key.shape[:2] == value.shape[:2], \
+            f"key's sequence and batch dims {key.shape[:2]} do not match value's {value.shape[:2]}"
     else:
-        assert_info(key.shape, value.shape, f"key shape {key.shape} does not match value shape {value.shape}")
+        assert key.shape == value.shape, f"key shape {key.shape} does not match value shape {value.shape}"
 
     #
     # compute in-projection
@@ -308,17 +301,16 @@ def multi_head_attention_forward(
         if in_proj_bias is None:
             b_q = b_k = b_v = None
         else:
-            b_q, b_k, b_v = in_proj_bias.chunk(3)
+            b_q, b_k, b_v = in_proj_bias.tensor_split(3)
         q, k, v = _in_projection(query, key, value, q_proj_weight, k_proj_weight, v_proj_weight, b_q, b_k, b_v)
 
     # prep attention mask
     if attn_mask is not None:
-        # if attn_mask.dtype == torch.uint8:
-        #     warnings.warn("Byte tensor for attn_mask in nn.MultiheadAttention is deprecated. Use bool tensor instead.")
-        #     attn_mask = attn_mask.to(torch.bool)
-        # else:
-        #     assert attn_mask.is_floating_point() or attn_mask.dtype == torch.bool, \
-        #         f"Only float, byte, and bool types are supported for attn_mask, not {attn_mask.dtype}"
+        if attn_mask.dtype == mindspore.uint8:
+            attn_mask = attn_mask.astype(mindspore.bool_)
+        else:
+            assert ops.is_floating_point(attn_mask) or attn_mask.dtype == mindspore.bool_, \
+                f"Only float, byte, and bool types are supported for attn_mask, not {attn_mask.dtype}"
         # ensure attn_mask's dim is 3
         if attn_mask.ndim == 2:
             correct_2d_size = (tgt_len, src_len)
@@ -354,19 +346,19 @@ def multi_head_attention_forward(
         k = k.view(k.shape[0], bsz * num_heads, head_dim).swapaxes(0, 1)
     else:
         # TODO finish disentangling control flow so we don't do in-projections when statics are passed
-        assert_info(static_k.shape[0], bsz * num_heads, \
-            f"expecting static_k.size(0) of {bsz * num_heads}, but got {static_k.size(0)}")
-        assert_info(static_k.shape[2], head_dim, \
-            f"expecting static_k.size(2) of {head_dim}, but got {static_k.size(2)}")
+        assert static_k.shape[0] == bsz * num_heads, \
+            f"expecting static_k.size(0) of {bsz * num_heads}, but got {static_k.size(0)}"
+        assert static_k.shape[2] == head_dim, \
+            f"expecting static_k.size(2) of {head_dim}, but got {static_k.size(2)}"
         k = static_k
     if static_v is None:
         v = v.view(v.shape[0], bsz * num_heads, head_dim).swapaxes(0, 1)
     else:
         # TODO finish disentangling control flow so we don't do in-projections when statics are passed
-        assert_info(static_v.shape[0], bsz * num_heads, \
-            f"expecting static_v.size(0) of {bsz * num_heads}, but got {static_v.size(0)}")
-        assert_info(static_v.shape[2], head_dim, \
-            f"expecting static_v.size(2) of {head_dim}, but got {static_v.size(2)}")
+        assert static_v.shape[0] == bsz * num_heads, \
+            f"expecting static_v.size(0) of {bsz * num_heads}, but got {static_v.size(0)}"
+        assert static_v.shape[2] == head_dim, \
+            f"expecting static_v.size(2) of {head_dim}, but got {static_v.size(2)}"
         v = static_v
 
     # add zero attention along batch dimension (now first)
