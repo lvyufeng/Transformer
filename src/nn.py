@@ -262,7 +262,6 @@ class TransformerEncoderLayer(nn.Cell):
         Shape:
             see the docs in Transformer class.
         """
-
         if src_key_padding_mask is not None:
             _skpm_dtype = src_key_padding_mask.dtype
             if _skpm_dtype != mindspore.bool_ and not ops.is_floating_point(src_key_padding_mask):

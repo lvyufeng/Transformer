@@ -254,7 +254,6 @@ def multi_head_attention_forward(
           :math:`S` is the source sequence length. If ``average_attn_weights=False``, returns attention weights per
           head of shape :math:`(num_heads, L, S)` when input is unbatched or :math:`(N, num_heads, L, S)`.
     """
-
     is_batched = _mha_shape_check(query, key, value, key_padding_mask, attn_mask, num_heads)
 
     # For unbatched input, we expand_dims at the expected batch-dim to pretend that the input
@@ -303,7 +302,6 @@ def multi_head_attention_forward(
         else:
             b_q, b_k, b_v = in_proj_bias.tensor_split(3)
         q, k, v = _in_projection(query, key, value, q_proj_weight, k_proj_weight, v_proj_weight, b_q, b_k, b_v)
-
     # prep attention mask
     if attn_mask is not None:
         if attn_mask.dtype == mindspore.uint8:
